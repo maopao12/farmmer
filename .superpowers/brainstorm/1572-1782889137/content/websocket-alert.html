@@ -1,0 +1,134 @@
+<h2>WebSocket 实时推送 &amp; 告警引擎</h2>
+<p class="subtitle">双端实时数据同步 + 阈值告警闭环</p>
+
+<div class="section">
+  <h3>🔌 WebSocket 实时数据推送架构</h3>
+  <div class="mockup">
+    <div class="mockup-header">PC端 + 移动端 共享同一WebSocket通道</div>
+    <div class="mockup-body">
+      <div style="display:flex; flex-direction:column; gap:10px; font-size:12px;">
+
+        <!-- Publisher -->
+        <div style="display:flex; gap:10px; align-items:center;">
+          <div style="background:#e8f0fe; border-radius:8px; padding:10px; flex:1; text-align:center;">
+            <b>📡 数据源</b><br>
+            <span style="font-size:10px;">MockDataCollector 或 MqttDataCollector</span>
+          </div>
+          <span style="font-size:20px;">→</span>
+          <div style="background:#fff3e0; border-radius:8px; padding:10px; flex:1; text-align:center;">
+            <b>📊 数据处理层</b><br>
+            <span style="font-size:10px;">存入MySQL + Redis缓存最新值</span>
+          </div>
+          <span style="font-size:20px;">→</span>
+          <div style="background:#e8f5e9; border-radius:8px; padding:10px; flex:1; text-align:center;">
+            <b>📨 WebSocket推送</b><br>
+            <span style="font-size:10px;">Spring WebSocket + STOMP</span>
+          </div>
+        </div>
+
+        <!-- Subscribers -->
+        <div style="display:flex; gap:10px;">
+          <div style="background:#f3e5f5; border-radius:8px; padding:12px; flex:1;">
+            <b>🖥️ PC端订阅</b><br>
+            <span style="font-size:10px;">/topic/plot/{plotId}/sensors</span><br>
+            <span style="font-size:10px; color:#5f6368;">→ Dashboard实时刷新</span>
+          </div>
+          <div style="background:#fce4ec; border-radius:8px; padding:12px; flex:1;">
+            <b>📱 移动端订阅</b><br>
+            <span style="font-size:10px;">/topic/plot/{plotId}/sensors</span><br>
+            <span style="font-size:10px; color:#5f6368;">→ 传感器卡片实时更新</span>
+          </div>
+          <div style="background:#e0f2f1; border-radius:8px; padding:12px; flex:1;">
+            <b>🔔 告警推送</b><br>
+            <span style="font-size:10px;">/topic/user/{userId}/alerts</span><br>
+            <span style="font-size:10px; color:#5f6368;">→ 双端告警弹窗 + 角标</span>
+          </div>
+          <div style="background:#fff9c4; border-radius:8px; padding:12px; flex:1;">
+            <b>🎛️ 设备状态</b><br>
+            <span style="font-size:10px;">/topic/device/{id}/status</span><br>
+            <span style="font-size:10px; color:#5f6368;">→ 在线/离线/执行结果</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>🔔 告警引擎 — 规则判断 + 通知闭环</h3>
+  <div class="mockup">
+    <div class="mockup-header">告警触发 → 推送通知 → 用户确认 完整流程</div>
+    <div class="mockup-body">
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; font-size:12px;">
+
+        <!-- Left: Alert Flow -->
+        <div>
+          <b>告警处理流程</b>
+          <div style="display:flex; align-items:center; gap:6px; margin:8px 0;">
+            <span style="background:#e3f2fd; padding:4px 8px; border-radius:4px;">传感器数据</span>
+            <span>→</span>
+            <span style="background:#fff3e0; padding:4px 8px; border-radius:4px;">AlertEngine.check()</span>
+            <span>→</span>
+            <span style="background:#ffebee; padding:4px 8px; border-radius:4px;">超阈值?</span>
+          </div>
+          <div style="border-left:3px solid #ff9800; padding-left:10px; margin:8px 0;">
+            <b>阈值规则示例：</b>
+            <pre style="font-size:10px; background:#fafafa; padding:8px; border-radius:4px;">
+规则1: 土壤湿度 < 30% → 🔴 严重告警 → 立即推送
+规则2: 土壤湿度 < 45% → 🟡 预警 → 记录不推送
+规则3: 温度 > 40°C   → 🔴 高温告警 → 立即推送
+规则4: 设备心跳超时5分钟 → 🟠 设备离线 → 推送
+            </pre>
+          </div>
+          <div style="display:flex; gap:6px; flex-wrap:wrap; margin-top:8px;">
+            <span style="background:#f44336; color:white; padding:3px 8px; border-radius:10px; font-size:10px;">🔴 严重</span>
+            <span style="background:#ff9800; color:white; padding:3px 8px; border-radius:10px; font-size:10px;">🟠 警告</span>
+            <span style="background:#ffc107; padding:3px 8px; border-radius:10px; font-size:10px;">🟡 提示</span>
+          </div>
+        </div>
+
+        <!-- Right: Notification -->
+        <div>
+          <b>双端通知机制</b>
+          <div style="margin-top:8px;">
+            <div style="background:white; border:1px solid #e0e0e0; border-radius:8px; padding:10px; margin:4px 0;">
+              <span style="font-size:10px; background:#e81123; color:white; padding:1px 6px; border-radius:4px;">PC</span>
+              <span style="font-size:11px;"> 🔔 浏览器Notification + 页面红点角标</span>
+            </div>
+            <div style="background:white; border:1px solid #e0e0e0; border-radius:8px; padding:10px; margin:4px 0;">
+              <span style="font-size:10px; background:#1a73e8; color:white; padding:1px 6px; border-radius:4px;">H5</span>
+              <span style="font-size:11px;"> 📱 WebSocket消息 → Toast弹出</span>
+            </div>
+            <div style="background:white; border:1px solid #e0e0e0; border-radius:8px; padding:10px; margin:4px 0;">
+              <span style="font-size:10px; background:#34a853; color:white; padding:1px 6px; border-radius:4px;">小程序</span>
+              <span style="font-size:11px;"> 📲 uni-app订阅消息推送</span>
+            </div>
+            <div style="background:#fafafa; padding:10px; border-radius:8px; margin-top:8px; font-size:10px; text-align:center;">
+              告警记录写入 alert_log 表 → 用户可在PC/移动端查看 → 标记已读
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section" style="background:#e8f5e9; padding:16px; border-radius:12px; border-left:4px solid #34a853;">
+  <h3>✅ 设计阶段总结 — 已确认的全部设计项</h3>
+  <table style="width:100%; font-size:12px; border-collapse:collapse;">
+    <tr style="background:#34a853; color:white;">
+      <th style="padding:8px;">#</th><th style="padding:8px;">设计项</th><th style="padding:8px;">确认内容</th>
+    </tr>
+    <tr><td style="padding:6px;">1</td><td style="padding:6px;">系统架构</td><td style="padding:6px;">三层架构：模拟数据 → Spring Boot → 双前端</td></tr>
+    <tr><td style="padding:6px;">2</td><td style="padding:6px;">数据库</td><td style="padding:6px;">8张表：plot/device/sensor_data/alert_rule/alert_log/control_log/user/knowledge_base</td></tr>
+    <tr><td style="padding:6px;">3</td><td style="padding:6px;">API</td><td style="padding:6px;">RESTful 20+接口，4大模块（监测/控制/告警/AI）</td></tr>
+    <tr><td style="padding:6px;">4</td><td style="padding:6px;">PC前端</td><td style="padding:6px;">Vue3 + Element Plus + ECharts，Edge Fluent风格，Dashboard Hub + 10个路由页面</td></tr>
+    <tr><td style="padding:6px;">5</td><td style="padding:6px;">移动端</td><td style="padding:6px;">uni-app 4Tab，农田选择器+动态设备列表+设备选择控制</td></tr>
+    <tr><td style="padding:6px;">6</td><td style="padding:6px;">AI智能体</td><td style="padding:6px;">RAG知识库 + 规则/LLM双模式，可切换</td></tr>
+    <tr><td style="padding:6px;">7</td><td style="padding:6px;">实时推送</td><td style="padding:6px;">WebSocket STOMP，双端统一订阅Topic</td></tr>
+    <tr><td style="padding:6px;">8</td><td style="padding:6px;">硬件切换</td><td style="padding:6px;">DataCollector接口抽象，配置切换mock/mqtt，代码零改动</td></tr>
+    <tr><td style="padding:6px;">9</td><td style="padding:6px;">工程结构</td><td style="padding:6px;">Maven多模块，7个子模块，职责分离</td></tr>
+    <tr><td style="padding:6px;">10</td><td style="padding:6px;">技术版本</td><td style="padding:6px;">JDK 21 + Spring Boot 3.2 + MyBatis-Plus 3.5 + MySQL 8.0 + Vue 3 + uni-app</td></tr>
+  </table>
+</div>

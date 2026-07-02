@@ -1,0 +1,63 @@
+<h2>智慧农业系统 - 整体架构设计</h2>
+<p class="subtitle">前15天校内阶段采用模拟数据方案，接口与后10天真实硬件完全兼容</p>
+
+<div class="section">
+  <h3>🏗️ 三层架构 + 双端展示</h3>
+  <div class="mockup">
+    <div class="mockup-header">系统架构总览</div>
+    <div class="mockup-body" style="font-family: monospace; font-size: 13px; line-height: 1.8;">
+      <div style="background:#e3f2fd; padding:12px; border-radius:8px; margin-bottom:12px; text-align:center;">
+        <strong>📱 前端展示层</strong><br>
+        <span style="background:#1976d2; color:white; padding:4px 12px; border-radius:4px; margin:4px;">PC端 Vue 3 + Element Plus</span>
+        <span style="background:#4caf50; color:white; padding:4px 12px; border-radius:4px; margin:4px;">移动端 uni-app</span>
+      </div>
+      <div style="text-align:center; margin:8px 0;">▼ WebSocket / HTTP REST / SSE ▼</div>
+      <div style="background:#fff3e0; padding:12px; border-radius:8px; margin-bottom:12px; text-align:center;">
+        <strong>⚙️ Spring Boot 3.2 后端服务</strong><br>
+        <small>REST API | WebSocket 实时推送 | MQTT 消息接收 | 告警引擎 | 知识库检索</small>
+      </div>
+      <div style="text-align:center; margin:8px 0;">▼ JDBC / MyBatis-Plus ▼</div>
+      <div style="background:#e8f5e9; padding:12px; border-radius:8px; margin-bottom:12px; text-align:center;">
+        <strong>🗄️ 数据层</strong><br>
+        <span style="background:#ff9800; color:white; padding:4px 8px; border-radius:4px; margin:4px;">MySQL 8.0</span>
+        <span style="background:#9c27b0; color:white; padding:4px 8px; border-radius:4px; margin:4px;">MQTT Broker</span>
+      </div>
+      <div style="text-align:center; margin:8px 0;">▼ 模拟数据 ▼</div>
+      <div style="background:#fce4ec; padding:12px; border-radius:8px; text-align:center;">
+        <strong>🔌 模拟数据仿真层</strong><br>
+        <small>定时生成温湿度/土壤/光照数据 → MQTT Topic 发布 → 模拟设备心跳</small>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>📋 双端定位差异</h3>
+  <table style="width:100%; border-collapse:collapse;">
+    <tr style="background:#1976d2; color:white;">
+      <th style="padding:10px;">维度</th>
+      <th style="padding:10px;">PC端 (Vue 3)</th>
+      <th style="padding:10px;">移动端 (uni-app)</th>
+    </tr>
+    <tr style="background:#f5f5f5;">
+      <td style="padding:8px;">目标用户</td>
+      <td style="padding:8px;">农场管理员 / 系统管理员</td>
+      <td style="padding:8px;">农户</td>
+    </tr>
+    <tr>
+      <td style="padding:8px;">核心功能</td>
+      <td style="padding:8px;">多地块总览、数据大屏、设备管理、告警日志</td>
+      <td style="padding:8px;">实时监测、灌溉控制、告警接收、AI问答</td>
+    </tr>
+    <tr style="background:#f5f5f5;">
+      <td style="padding:8px;">特色</td>
+      <td style="padding:8px;">数据可视化大屏、ECharts图表、批量管理</td>
+      <td style="padding:8px;">扫码绑定设备、推送通知、语音问答</td>
+    </tr>
+    <tr>
+      <td style="padding:8px;">编译目标</td>
+      <td style="padding:8px;">Web浏览器</td>
+      <td style="padding:8px;">H5 + 微信小程序 + Android/iOS App</td>
+    </tr>
+  </table>
+</div>

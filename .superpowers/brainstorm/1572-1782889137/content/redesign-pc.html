@@ -1,0 +1,171 @@
+<h2>PC端重设计 — Edge Fluent 风格仪表盘</h2>
+<p class="subtitle">主页为中央仪表盘Hub，卡片导航至各功能详情页</p>
+
+<div class="section">
+  <h3>🖥️ PC端主页 — Dashboard Hub</h3>
+  <div class="mockup">
+    <div class="mockup-header">智慧农业数据驾驶舱 — 仿Edge新标签页风格</div>
+    <div class="mockup-body">
+      <!-- Fluent-style top bar -->
+      <div style="background:#fff; border-bottom:1px solid #e8e8e8; padding:8px 24px; display:flex; align-items:center; gap:24px; font-size:13px;">
+        <span style="font-weight:700; font-size:18px; color:#1a73e8;">🌾 SmartFarm</span>
+        <div style="flex:1; max-width:500px; background:#f1f3f4; border-radius:20px; padding:8px 16px; color:#5f6368;">
+          🔍 搜索地块、设备、告警...
+        </div>
+        <span style="color:#5f6368;">🔔 <span style="background:#e81123; color:#fff; border-radius:50%; padding:1px 6px; font-size:10px;">3</span></span>
+        <span style="background:#e8f0fe; color:#1a73e8; padding:6px 12px; border-radius:20px;">👤 张三</span>
+      </div>
+
+      <!-- Main content -->
+      <div style="padding:24px; background:#f8f9fa; min-height:500px;">
+        <!-- Welcome + quick summary row -->
+        <div style="margin-bottom:20px;">
+          <h3 style="margin:0; font-weight:400; color:#202124;">下午好，张三 👋</h3>
+          <p style="color:#5f6368; font-size:13px; margin:4px 0;">当前管理 <b>3个地块</b> · <b>12台设备</b>在线 · <b>2条未读告警</b></p>
+        </div>
+
+        <!-- Quick Stats Cards -->
+        <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:12px; margin-bottom:20px;">
+          <div style="background:#fff; border-radius:12px; padding:16px; box-shadow:0 1px 3px rgba(0,0,0,0.08); cursor:pointer;" onclick="this.style.outline='2px solid #1a73e8'">
+            <div style="font-size:11px; color:#5f6368; text-transform:uppercase; letter-spacing:.5px;">🌡️ 平均温度</div>
+            <div style="font-size:32px; font-weight:600; color:#202124; margin:8px 0;">26.5<span style="font-size:14px; color:#5f6368;">°C</span></div>
+            <div style="font-size:11px; color:#34a853;">↑ 1.2°C vs 昨日</div>
+          </div>
+          <div style="background:#fff; border-radius:12px; padding:16px; box-shadow:0 1px 3px rgba(0,0,0,0.08); cursor:pointer;">
+            <div style="font-size:11px; color:#5f6368; text-transform:uppercase; letter-spacing:.5px;">💧 平均土壤湿度</div>
+            <div style="font-size:32px; font-weight:600; color:#202124; margin:8px 0;">68<span style="font-size:14px; color:#5f6368;">%</span></div>
+            <div style="font-size:11px; color:#ea8600;">⚠ 接近下限</div>
+          </div>
+          <div style="background:#fff; border-radius:12px; padding:16px; box-shadow:0 1px 3px rgba(0,0,0,0.08); cursor:pointer;">
+            <div style="font-size:11px; color:#5f6368; text-transform:uppercase; letter-spacing:.5px;">🔌 设备在线率</div>
+            <div style="font-size:32px; font-weight:600; color:#202124; margin:8px 0;">10/12</div>
+            <div style="font-size:11px; color:#e81123;">● 2台离线</div>
+          </div>
+          <div style="background:#fff; border-radius:12px; padding:16px; box-shadow:0 1px 3px rgba(0,0,0,0.08); cursor:pointer;">
+            <div style="font-size:11px; color:#5f6368; text-transform:uppercase; letter-spacing:.5px;">🔔 今日告警</div>
+            <div style="font-size:32px; font-weight:600; color:#e81123; margin:8px 0;">2</div>
+            <div style="font-size:11px; color:#5f6368;">查看详情 →</div>
+          </div>
+        </div>
+
+        <!-- Main Grid: Charts + Plots + Shortcuts -->
+        <div style="display:grid; grid-template-columns:2fr 1fr; gap:16px;">
+
+          <!-- Left: Chart Area -->
+          <div>
+            <div style="background:#fff; border-radius:12px; padding:20px; box-shadow:0 1px 3px rgba(0,0,0,0.08); margin-bottom:16px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                <span style="font-weight:600; color:#202124;">📈 温湿度趋势</span>
+                <span style="font-size:11px; color:#1a73e8; cursor:pointer;">查看详情 →</span>
+              </div>
+              <div class="placeholder" style="height:200px; background:#f8f9fa; border-radius:8px;">
+                ECharts 多Y轴折线图 — 温度(红) + 湿度(蓝) 近24小时
+              </div>
+            </div>
+
+            <!-- My Plots Section -->
+            <div style="background:#fff; border-radius:12px; padding:20px; box-shadow:0 1px 3px rgba(0,0,0,0.08);">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+                <span style="font-weight:600; color:#202124;">🗺️ 我的地块</span>
+                <span style="font-size:11px; color:#1a73e8; cursor:pointer;">+ 添加地块</span>
+              </div>
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                <div style="border:1px solid #e8e8e8; border-radius:10px; padding:14px; cursor:pointer;">
+                  <div style="font-weight:600; font-size:14px;">🌽 地块A · 温室大棚</div>
+                  <div style="font-size:11px; color:#5f6368; margin:4px 0;">面积: 2.5亩 | 作物: 番茄</div>
+                  <div style="display:flex; gap:8px; margin-top:8px; font-size:11px;">
+                    <span style="background:#e8f5e9; color:#2e7d32; padding:2px 8px; border-radius:10px;">5台设备</span>
+                    <span style="background:#e8f5e9; color:#2e7d32; padding:2px 8px; border-radius:10px;">正常</span>
+                  </div>
+                </div>
+                <div style="border:1px solid #e8e8e8; border-radius:10px; padding:14px; cursor:pointer;">
+                  <div style="font-weight:600; font-size:14px;">🌾 地块B · 露天农田</div>
+                  <div style="font-size:11px; color:#5f6368; margin:4px 0;">面积: 5.0亩 | 作物: 水稻</div>
+                  <div style="display:flex; gap:8px; margin-top:8px; font-size:11px;">
+                    <span style="background:#fff3e0; color:#e65100; padding:2px 8px; border-radius:10px;">3台设备</span>
+                    <span style="background:#ffebee; color:#c62828; padding:2px 8px; border-radius:10px;">1台离线</span>
+                  </div>
+                </div>
+                <div style="border:1px solid #e8e8e8; border-radius:10px; padding:14px; cursor:pointer;">
+                  <div style="font-weight:600; font-size:14px;">🍅 地块C · 蔬菜大棚</div>
+                  <div style="font-size:11px; color:#5f6368; margin:4px 0;">面积: 1.8亩 | 作物: 黄瓜</div>
+                  <div style="display:flex; gap:8px; margin-top:8px; font-size:11px;">
+                    <span style="background:#e8f5e9; color:#2e7d32; padding:2px 8px; border-radius:10px;">4台设备</span>
+                    <span style="background:#e8f5e9; color:#2e7d32; padding:2px 8px; border-radius:10px;">正常</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: Quick Actions + Alerts -->
+          <div>
+            <!-- Quick Actions -->
+            <div style="background:#fff; border-radius:12px; padding:20px; box-shadow:0 1px 3px rgba(0,0,0,0.08); margin-bottom:16px;">
+              <span style="font-weight:600; color:#202124; display:block; margin-bottom:12px;">⚡ 快捷操作</span>
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+                <div style="background:#e8f0fe; border-radius:8px; padding:12px; text-align:center; cursor:pointer; font-size:12px;">
+                  🎛️<br>设备控制
+                </div>
+                <div style="background:#fce4ec; border-radius:8px; padding:12px; text-align:center; cursor:pointer; font-size:12px;">
+                  🔔<br>告警中心
+                </div>
+                <div style="background:#e8f5e9; border-radius:8px; padding:12px; text-align:center; cursor:pointer; font-size:12px;">
+                  📋<br>操作日志
+                </div>
+                <div style="background:#f3e5f5; border-radius:8px; padding:12px; text-align:center; cursor:pointer; font-size:12px;">
+                  🤖<br>AI助手
+                </div>
+                <div style="background:#fff3e0; border-radius:8px; padding:12px; text-align:center; cursor:pointer; font-size:12px;">
+                  ⚙️<br>系统设置
+                </div>
+                <div style="background:#e0f2f1; border-radius:8px; padding:12px; text-align:center; cursor:pointer; font-size:12px;">
+                  📊<br>全屏大屏
+                </div>
+              </div>
+            </div>
+
+            <!-- Recent Alerts -->
+            <div style="background:#fff; border-radius:12px; padding:20px; box-shadow:0 1px 3px rgba(0,0,0,0.08);">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                <span style="font-weight:600; color:#202124;">🔔 最近告警</span>
+                <span style="font-size:11px; color:#1a73e8; cursor:pointer;">全部 →</span>
+              </div>
+              <div style="font-size:12px;">
+                <div style="border-left:3px solid #e81123; padding:6px 10px; margin:6px 0; background:#fafafa; border-radius:4px;">
+                  <b>土壤湿度过低</b> · 地块A<br><span style="color:#5f6368;">10分钟前 · 当前值: 25%</span>
+                </div>
+                <div style="border-left:3px solid #ea8600; padding:6px 10px; margin:6px 0; background:#fafafa; border-radius:4px;">
+                  <b>设备离线</b> · 地块B - 温湿度传感器#3<br><span style="color:#5f6368;">30分钟前 · 最后心跳: 09:15</span>
+                </div>
+                <div style="border-left:3px solid #e81123; padding:6px 10px; margin:6px 0; background:#fafafa; border-radius:4px;">
+                  <b>温度过高</b> · 地块A<br><span style="color:#5f6368;">1小时前 · 当前值: 35.2°C</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>🧭 PC端路由结构</h3>
+  <table style="width:100%; font-size:12px; border-collapse:collapse;">
+    <tr style="background:#1a73e8; color:white;">
+      <th style="padding:8px;">路由</th><th style="padding:8px;">页面</th><th style="padding:8px;">说明</th>
+      <th style="padding:8px;">入口</th>
+    </tr>
+    <tr><td style="padding:6px;">/dashboard</td><td style="padding:6px;">数据驾驶舱</td><td style="padding:6px;">主页Hub，概览+导航</td><td style="padding:6px;">默认页</td></tr>
+    <tr><td style="padding:6px;">/monitor/:plotId</td><td style="padding:6px;">地块实时监测</td><td style="padding:6px;">单个地块详细传感器数据</td><td style="padding:6px;">地块卡片 →</td></tr>
+    <tr><td style="padding:6px;">/trends</td><td style="padding:6px;">历史趋势分析</td><td style="padding:6px;">7天/30天/自定义图表</td><td style="padding:6px;">趋势卡片 →</td></tr>
+    <tr><td style="padding:6px;">/devices</td><td style="padding:6px;">设备管理</td><td style="padding:6px;">设备列表+绑定+状态</td><td style="padding:6px;">快捷操作</td></tr>
+    <tr><td style="padding:6px;">/control</td><td style="padding:6px;">设备控制</td><td style="padding:6px;">开关/参数调节/指令日志</td><td style="padding:6px;">快捷操作</td></tr>
+    <tr><td style="padding:6px;">/alerts</td><td style="padding:6px;">告警中心</td><td style="padding:6px;">告警列表+规则配置</td><td style="padding:6px;">告警卡片</td></tr>
+    <tr><td style="padding:6px;">/ai-assistant</td><td style="padding:6px;">AI农事助手</td><td style="padding:6px;">对话+知识库管理</td><td style="padding:6px;">快捷操作</td></tr>
+    <tr><td style="padding:6px;">/screen</td><td style="padding:6px;">全屏数据大屏</td><td style="padding:6px;">投屏展示用</td><td style="padding:6px;">快捷操作</td></tr>
+    <tr><td style="padding:6px;">/logs</td><td style="padding:6px;">操作日志</td><td style="padding:6px;">控制记录+审计</td><td style="padding:6px;">快捷操作</td></tr>
+    <tr><td style="padding:6px;">/settings</td><td style="padding:6px;">系统设置</td><td style="padding:6px;">用户管理+权限</td><td style="padding:6px;">快捷操作</td></tr>
+  </table>
+</div>

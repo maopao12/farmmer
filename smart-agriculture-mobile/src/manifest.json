@@ -1,0 +1,8 @@
+{
+  "name": "智慧农业",
+  "appid": "__UNI__SMARTFARM",
+  "versionName": "1.0.0",
+  "versionCode": "100",
+  "transformPx": false,
+  "uniStatistics": { "enable": false }
+}

@@ -1,0 +1,216 @@
+<h2>AI 智能体 &amp; 项目工程结构设计</h2>
+<p class="subtitle">RAG知识库检索 + 大模型问答 + Spring Boot工程分层</p>
+
+<div class="section">
+  <h3>🤖 AI智能体架构 — RAG + 知识库检索</h3>
+  <div class="mockup">
+    <div class="mockup-header">AI农事助手 — 知-答-执 闭环流程</div>
+    <div class="mockup-body">
+      <div style="display:flex; gap:12px; font-size:12px; line-height:1.6;">
+
+        <!-- Step 1: 用户提问 -->
+        <div style="flex:1; background:#e8f0fe; border-radius:10px; padding:12px; text-align:center;">
+          <div style="font-size:24px;">👨‍🌾</div>
+          <b>用户提问</b>
+          <div style="background:white; border-radius:8px; padding:8px; margin-top:8px; font-size:10px;">
+            "番茄苗期湿度68%该浇水吗？"
+          </div>
+          <div style="font-size:9px; color:#5f6368; margin-top:4px;">→ POST /api/v1/ai/chat</div>
+        </div>
+
+        <!-- Step 2: 关键词提取 -->
+        <div style="flex:1; background:#fff3e0; border-radius:10px; padding:12px; text-align:center;">
+          <div style="font-size:24px;">🔍</div>
+          <b>关键词提取</b>
+          <div style="background:white; border-radius:8px; padding:8px; margin-top:8px; font-size:10px;">
+            [番茄, 苗期, 湿度, 68%, 浇水]
+          </div>
+          <div style="font-size:9px; color:#5f6368; margin-top:4px;">分词 + 实体识别</div>
+        </div>
+
+        <!-- Step 3: 知识库检索 -->
+        <div style="flex:1; background:#e8f5e9; border-radius:10px; padding:12px; text-align:center;">
+          <div style="font-size:24px;">📚</div>
+          <b>知识库检索</b>
+          <div style="background:white; border-radius:8px; padding:8px; margin-top:8px; font-size:10px;">
+            MySQL LIKE/全文索引<br>匹配 knowledge_base 表<br>Top-3 相关结果
+          </div>
+          <div style="font-size:9px; color:#5f6368; margin-top:4px;">关键词匹配 + 语义排序</div>
+        </div>
+
+        <!-- Step 4: 上下文组装 -->
+        <div style="flex:1; background:#f3e5f5; border-radius:10px; padding:12px; text-align:center;">
+          <div style="font-size:24px;">🧩</div>
+          <b>上下文组装</b>
+          <div style="background:white; border-radius:8px; padding:8px; margin-top:8px; font-size:10px;">
+            知识库结果 +<br>实时传感器数据 +<br>历史操作记录
+          </div>
+          <div style="font-size:9px; color:#5f6368; margin-top:4px;">Prompt模板拼接</div>
+        </div>
+
+        <!-- Step 5: LLM生成回答 -->
+        <div style="flex:1; background:#fce4ec; border-radius:10px; padding:12px; text-align:center;">
+          <div style="font-size:24px;">🧠</div>
+          <b>LLM/规则引擎</b>
+          <div style="background:white; border-radius:8px; padding:8px; margin-top:8px; font-size:10px;">
+            选项A: DeepSeek API<br>
+            选项B: 本地规则匹配<br>
+            （可切换）
+          </div>
+          <div style="font-size:9px; color:#5f6368; margin-top:4px;">生成自然语言回答</div>
+        </div>
+
+        <!-- Step 6: 返回 -->
+        <div style="flex:1; background:#e0f2f1; border-radius:10px; padding:12px; text-align:center;">
+          <div style="font-size:24px;">📤</div>
+          <b>返回前端</b>
+          <div style="background:white; border-radius:8px; padding:8px; margin-top:8px; font-size:10px;">
+            "湿度68%在适宜范围，<br>暂不需要浇水。<br>建议明早再观察。"
+          </div>
+          <div style="font-size:9px; color:#5f6368; margin-top:4px;">SSE流式/同步返回</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>🔀 AI问答双模式切换</h3>
+  <table style="width:100%; font-size:12px; border-collapse:collapse;">
+    <tr style="background:#1a73e8; color:white;">
+      <th style="padding:8px;">模式</th><th style="padding:8px;">实现方式</th><th style="padding:8px;">优点</th><th style="padding:8px;">适用场景</th>
+    </tr>
+    <tr>
+      <td style="padding:6px;"><b>规则引擎模式</b></td>
+      <td style="padding:6px;">MySQL全文索引 + 阈值判断 + 模板回答</td>
+      <td style="padding:6px;">离线可用、零成本、响应快</td>
+      <td style="padding:6px;">校内演示、无网络环境</td>
+    </tr>
+    <tr>
+      <td style="padding:6px;"><b>大模型模式</b></td>
+      <td style="padding:6px;">DeepSeek/通义千问 API + RAG上下文</td>
+      <td style="padding:6px;">回答更自然、推理能力强</td>
+      <td style="padding:6px;">有网络、需要高质量回答</td>
+    </tr>
+    <tr>
+      <td style="padding:6px;"><b>混合模式（默认）</b></td>
+      <td style="padding:6px;">优先规则匹配，无法匹配时降级大模型</td>
+      <td style="padding:6px;">兼顾速度和智能</td>
+      <td style="padding:6px;">推荐生产使用</td>
+    </tr>
+  </table>
+</div>
+
+<div class="section">
+  <h3>📁 Spring Boot 工程结构</h3>
+  <div class="mockup">
+    <div class="mockup-header">smart-agriculture — Maven多模块项目</div>
+    <div class="mockup-body" style="font-family: monospace; font-size:11px; line-height:1.5;">
+<pre style="background:#263238; color:#aed581; padding:16px; border-radius:8px; margin:0;">
+smart-agriculture/
+├── pom.xml                          # 父POM，Spring Boot 3.2 + MyBatis-Plus
+├── smart-agriculture-common/        # 公共模块
+│   └── src/main/java/com/smartfarm/common/
+│       ├── result/Result.java       # 统一响应封装
+│       ├── exception/               # 全局异常处理
+│       ├── config/                  # 通用配置
+│       └── utils/                   # 工具类
+│
+├── smart-agriculture-framework/     # 框架模块
+│   └── src/main/java/com/smartfarm/framework/
+│       ├── security/                # JWT认证 + 权限拦截
+│       ├── websocket/               # WebSocket配置 + 推送服务
+│       └── mqtt/                    # MQTT客户端（模拟/真实切换）
+│
+├── smart-agriculture-business/      # 业务模块
+│   └── src/main/java/com/smartfarm/business/
+│       ├── monitor/                 # 数据监测（实时 + 历史）
+│       │   ├── controller/SensorController.java
+│       │   ├── service/SensorService.java
+│       │   └── mapper/SensorDataMapper.java
+│       ├── device/                  # 设备管理
+│       │   ├── controller/DeviceController.java
+│       │   ├── service/DeviceService.java
+│       │   └── mapper/DeviceMapper.java
+│       ├── control/                 # 设备控制
+│       │   ├── controller/ControlController.java
+│       │   ├── service/ControlService.java
+│       │   └── mapper/ControlLogMapper.java
+│       ├── alert/                   # 告警管理
+│       │   ├── controller/AlertController.java
+│       │   ├── service/AlertEngine.java   # 告警判断引擎
+│       │   └── mapper/AlertMapper.java
+│       ├── ai/                      # AI智能体
+│       │   ├── controller/AiController.java
+│       │   ├── service/RagService.java    # RAG检索
+│       │   ├── service/LlmService.java    # 大模型调用
+│       │   └── mapper/KnowledgeMapper.java
+│       └── plot/                    # 地块管理
+│           ├── controller/PlotController.java
+│           ├── service/PlotService.java
+│           └── mapper/PlotMapper.java
+│
+├── smart-agriculture-simulator/     # 模拟数据模块 ⭐可插拔
+│   └── src/main/java/com/smartfarm/simulator/
+│       ├── DataCollector.java       # 数据采集接口（核心抽象）
+│       ├── MockDataCollector.java   # 模拟实现（校内用）
+│       ├── MqttDataCollector.java   # MQTT实现（基地硬件用）
+│       ├── MockSensorTask.java      # 定时生成模拟传感器数据
+│       └── MockMqttPublisher.java   # 模拟MQTT消息发布
+│
+├── smart-agriculture-web/           # PC前端 (Vue 3)
+│   └── src/
+│       ├── views/                   # 10个页面组件
+│       ├── components/              # 公共组件
+│       ├── router/                  # 路由配置
+│       ├── api/                     # Axios封装
+│       └── utils/websocket.js       # WebSocket客户端
+│
+├── smart-agriculture-mobile/        # 移动端 (uni-app)
+│   └── src/
+│       ├── pages/                   # 4个Tab + 子页面
+│       ├── components/              # 公共组件
+│       └── api/                     # 请求封装
+│
+└── smart-agriculture-server/        # 启动模块
+    ├── src/main/resources/
+    │   ├── application.yml           # 主配置
+    │   ├── application-mock.yml      # Mock环境（校内）
+    │   ├── application-prod.yml      # 生产环境（基地硬件）
+    │   └── db/migration/             # 数据库初始化SQL
+    └── src/main/java/.../SmartFarmApplication.java
+</pre>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>🔄 核心设计：DataCollector接口 — 模拟/真实切换</h3>
+  <div class="mockup">
+    <div class="mockup-header">接口抽象 + 多实现，通过 application.yml 切换</div>
+    <div class="mockup-body">
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; font-size:12px;">
+        <div style="background:#e8f5e9; padding:12px; border-radius:8px;">
+          <b>🏫 校内模式 (application-mock.yml)</b>
+          <pre style="font-size:10px; color:#2e7d32; margin:4px 0;">data:
+  collector: mock
+  mock:
+    interval: 5000  # 5秒生成一次数据</pre>
+          <div style="font-size:10px;">MockDataCollector 定时随机生成传感器数据 → 直接写入数据库 + 通过WebSocket推向前端</div>
+        </div>
+        <div style="background:#fce4ec; padding:12px; border-radius:8px;">
+          <b>🏭 基地模式 (application-prod.yml)</b>
+          <pre style="font-size:10px; color:#c62828; margin:4px 0;">data:
+  collector: mqtt
+  mqtt:
+    broker: tcp://192.168.1.100:1883
+    topics: sensor/+/data</pre>
+          <div style="font-size:10px;">MqttDataCollector 订阅MQTT Topic → 接收真实硬件数据 → 写入数据库 + WebSocket推送</div>
+        </div>
+      </div>
+      <div style="margin-top:12px; padding:10px; background:#fff3e0; border-radius:8px; font-size:12px;">
+        <b>🔑 关键点：</b>切换只需修改 application.yml 中的 <code>data.collector</code> 值 (mock/mqtt)，业务代码零改动。数据库表、API接口、WebSocket推送逻辑完全一致。
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,4 @@
+com\smartfarm\simulator\DataCollector.class
+com\smartfarm\simulator\HeartbeatChecker.class
+com\smartfarm\simulator\MockDataCollector.class
+com\smartfarm\simulator\MockDataCollector$MockDataSnapshot.class

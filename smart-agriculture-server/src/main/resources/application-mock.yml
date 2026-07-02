@@ -1,0 +1,16 @@
+# ============================================================
+# Mock 环境配置（校内15天使用）
+# 激活方式: spring.profiles.active=mock
+# ============================================================
+
+# 数据采集模式: mock (模拟数据)
+data:
+  collector: mock
+  mock:
+    interval: 5000  # 模拟数据生成间隔(毫秒)
+
+# 日志级别
+logging:
+  level:
+    com.smartfarm.simulator: DEBUG
+    com.smartfarm.business.control: DEBUG

@@ -1,0 +1,82 @@
+# ============================================================
+# 智慧农业系统 - 主配置文件
+# 默认激活 mock 环境（校内15天模拟数据）
+#
+# 虚拟机部署时通过环境变量覆盖：
+#   SERVER_ADDRESS=0.0.0.0
+#   DB_HOST=192.168.x.x
+#   MQTT_BROKER=tcp://192.168.x.x:1883
+# ============================================================
+spring:
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:mock}
+
+  application:
+    name: smart-agriculture
+
+  datasource:
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/smart_agriculture?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia%2FShanghai&createDatabaseIfNotExist=true
+    username: ${DB_USER:root}
+    password: ${DB_PASS:123456}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      minimum-idle: 5
+      maximum-pool-size: 20
+      idle-timeout: 300000
+      max-lifetime: 1200000
+
+  sql:
+    init:
+      mode: ${SQL_INIT_MODE:always}
+      schema-locations: classpath:db/schema.sql
+      data-locations: classpath:db/data.sql
+      continue-on-error: true
+
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: Asia/Shanghai
+    default-property-inclusion: non_null
+
+server:
+  address: ${SERVER_ADDRESS:0.0.0.0}
+  port: ${SERVER_PORT:8080}
+
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    db-config:
+      id-type: auto
+      logic-delete-field: deleted
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+
+jwt:
+  secret: ${JWT_SECRET:SmF2YVNwcmluZ0Jvb3RWdWUzU21hcnRBZ3JpY3VsdHVyZVNlY3JldEtleUZvcjI1RGF5VHJhaW5pbmc=}
+  expiration: 86400000
+
+mqtt:
+  enabled: ${MQTT_ENABLED:false}
+  broker: ${MQTT_BROKER:tcp://localhost:1883}
+  client-id: smart-agriculture-${random.uuid}
+  topics: sensor/+/data,device/+/status,device/+/response
+  qos: 1
+  timeout: 10
+  keep-alive: 60
+
+# ============================================================
+# 系统可调参数（管理员可在 Settings 页面修改，重启后生效）
+# ============================================================
+smartfarm:
+  data:
+    interval: ${DATA_INTERVAL:5}        # 模拟数据采集间隔(秒)
+  heartbeat:
+    timeout: ${HEARTBEAT_TIMEOUT:3}     # 心跳超时判定(分钟)
+  command:
+    timeout: ${CMD_TIMEOUT:10}          # 指令响应超时(秒)
+
+logging:
+  level:
+    com.smartfarm: DEBUG
+    org.springframework.security: INFO

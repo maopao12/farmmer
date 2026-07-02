@@ -1,0 +1,121 @@
+<h2>数据库模型 &amp; API 设计</h2>
+<p class="subtitle">核心要点：模拟数据与真实硬件共用同一套数据表和API接口</p>
+
+<div class="section">
+  <h3>🗄️ ER 实体关系图</h3>
+  <div class="mockup">
+    <div class="mockup-header">MySQL 数据库核心表结构 (8张表)</div>
+    <div class="mockup-body" style="font-family: monospace; font-size: 12px; line-height: 1.7;">
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+
+        <div style="background:#e3f2fd; padding:10px; border-radius:6px;">
+          <strong>📋 plot (地块表)</strong><br>
+          id, name, location, area, crop_type,<br>
+          owner_id(FK→user), create_time
+        </div>
+
+        <div style="background:#e3f2fd; padding:10px; border-radius:6px;">
+          <strong>📋 device (设备表)</strong><br>
+          id, device_code, device_type(温湿度/土壤/灌溉),<br>
+          plot_id(FK), status(在线/离线/故障),<br>
+          mqtt_topic, last_heartbeat
+        </div>
+
+        <div style="background:#e8f5e9; padding:10px; border-radius:6px;">
+          <strong>📋 sensor_data (传感器数据表)</strong><br>
+          id, device_id(FK), data_type, data_value,<br>
+          unit, collect_time, source(模拟/真实)
+          <br><small>⭐ 模拟/真实数据写入同一张表</small>
+        </div>
+
+        <div style="background:#fff3e0; padding:10px; border-radius:6px;">
+          <strong>📋 alert_rule (告警规则表)</strong><br>
+          id, device_id(FK), metric_type,<br>
+          min_threshold, max_threshold,<br>
+          enabled, notify_method
+        </div>
+
+        <div style="background:#fce4ec; padding:10px; border-radius:6px;">
+          <strong>📋 alert_log (告警记录表)</strong><br>
+          id, rule_id(FK), device_id(FK),<br>
+          alert_msg, alert_level, current_value,<br>
+          is_read, trigger_time
+        </div>
+
+        <div style="background:#f3e5f5; padding:10px; border-radius:6px;">
+          <strong>📋 control_log (控制指令表)</strong><br>
+          id, device_id(FK), command(开/关),<br>
+          operator_id(FK), command_status,<br>
+          result_msg, send_time, exec_time
+          <br><small>⭐ MQTT下发/模拟执行共用</small>
+        </div>
+
+        <div style="background:#e0f7fa; padding:10px; border-radius:6px;">
+          <strong>📋 user (用户表)</strong><br>
+          id, username, password(BCrypt),<br>
+          role(农户/农场管理员/系统管理员),<br>
+          phone, create_time
+        </div>
+
+        <div style="background:#fff9c4; padding:10px; border-radius:6px;">
+          <strong>📋 knowledge_base (知识库表)</strong><br>
+          id, question, answer, category,<br>
+          keywords, create_time
+          <br><small>⭐ AI智能体RAG检索用</small>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>🔌 核心 REST API (共 20+ 接口)</h3>
+  <div class="mockup">
+    <div class="mockup-header">API 按模块分组 — 前缀 /api/v1</div>
+    <div class="mockup-body" style="font-size:13px;">
+
+      <div class="section">
+        <span class="label">数据监测模块</span>
+        <table style="width:100%; font-size:12px; border-collapse:collapse;">
+          <tr style="background:#1976d2; color:white;"><th>方法</th><th>路径</th><th>说明</th></tr>
+          <tr><td style="padding:4px 8px;">GET</td><td style="padding:4px 8px;">/sensor/realtime/{deviceId}</td><td style="padding:4px 8px;">获取设备最新数据</td></tr>
+          <tr><td style="padding:4px 8px;">GET</td><td style="padding:4px 8px;">/sensor/history?deviceId=&days=7</td><td style="padding:4px 8px;">历史数据趋势（7天）</td></tr>
+          <tr><td style="padding:4px 8px;">GET</td><td style="padding:4px 8px;">/plot/{id}/overview</td><td style="padding:4px 8px;">地块综合概览</td></tr>
+          <tr><td style="padding:4px 8px;">GET</td><td style="padding:4px 8px;">/plot/list</td><td style="padding:4px 8px;">多地块列表</td></tr>
+        </table>
+      </div>
+
+      <div class="section">
+        <span class="label">设备控制模块</span>
+        <table style="width:100%; font-size:12px; border-collapse:collapse;">
+          <tr style="background:#4caf50; color:white;"><th>方法</th><th>路径</th><th>说明</th></tr>
+          <tr><td style="padding:4px 8px;">POST</td><td style="padding:4px 8px;">/control/irrigation</td><td style="padding:4px 8px;">灌溉开关控制</td></tr>
+          <tr><td style="padding:4px 8px;">GET</td><td style="padding:4px 8px;">/control/log?deviceId=</td><td style="padding:4px 8px;">控制历史记录</td></tr>
+          <tr><td style="padding:4px 8px;">GET</td><td style="padding:4px 8px;">/device/status/{id}</td><td style="padding:4px 8px;">设备在线状态</td></tr>
+          <tr><td style="padding:4px 8px;">POST</td><td style="padding:4px 8px;">/device/bind</td><td style="padding:4px 8px;">绑定/解绑设备</td></tr>
+        </table>
+      </div>
+
+      <div class="section">
+        <span class="label">告警管理 &amp; AI问答</span>
+        <table style="width:100%; font-size:12px; border-collapse:collapse;">
+          <tr style="background:#ff9800; color:white;"><th>方法</th><th>路径</th><th>说明</th></tr>
+          <tr><td style="padding:4px 8px;">POST</td><td style="padding:4px 8px;">/alert/rule</td><td style="padding:4px 8px;">设置告警阈值</td></tr>
+          <tr><td style="padding:4px 8px;">GET</td><td style="padding:4px 8px;">/alert/log?page=&size=</td><td style="padding:4px 8px;">告警日志分页</td></tr>
+          <tr><td style="padding:4px 8px;">POST</td><td style="padding:4px 8px;">/ai/chat</td><td style="padding:4px 8px;">AI智能问答</td></tr>
+          <tr><td style="padding:4px 8px;">GET</td><td style="padding:4px 8px;">/ai/knowledge</td><td style="padding:4px 8px;">知识库管理</td></tr>
+        </table>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="section" style="background:#fff3e0; padding:12px; border-radius:8px; border-left:4px solid #ff9800;">
+  <strong>🔑 关键设计决策：模拟/真实切换</strong><br>
+  <small>
+  sensor_data 表有 <code>source</code> 字段区分来源。后端通过 <code>DataCollector</code> 接口抽象，有 MockDataCollector 和 MqttDataCollector 两个实现，
+  通过配置文件切换。API接口完全不变，上层代码零改动。
+  </small>
+</div>

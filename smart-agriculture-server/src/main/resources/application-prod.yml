@@ -1,0 +1,34 @@
+# ============================================================
+# 生产/基地环境配置（虚拟机 + 真实硬件）
+# 激活方式: spring.profiles.active=prod
+#         或环境变量 SPRING_PROFILES_ACTIVE=prod
+#
+# 虚拟机部署命令示例:
+#   java -jar smart-agriculture-server.jar \
+#     --spring.profiles.active=prod \
+#     --DB_HOST=192.168.56.101 \
+#     --MQTT_BROKER=tcp://192.168.56.102:1883 \
+#     --MQTT_ENABLED=true
+# ============================================================
+
+# 数据采集模式: mqtt（真实硬件数据）
+data:
+  collector: ${DATA_COLLECTOR:mqtt}
+  mock:
+    interval: 5000
+
+# MQTT 启用
+mqtt:
+  enabled: true
+
+# 数据库初始化关闭（生产环境数据已存在）
+spring:
+  sql:
+    init:
+      mode: never
+
+# 日志：生产环境减少DEBUG输出
+logging:
+  level:
+    com.smartfarm: INFO
+    com.smartfarm.simulator: INFO
